@@ -9,6 +9,18 @@ RUN apt-get update && apt-get install -y \
     git \
     ros-noetic-costmap-2d \
     ros-noetic-rviz \
+    # gstreamer1.0-tools \
+    # libgstreamer1.0-dev \
+    # libgstreamer-plugins-base1.0-dev \
+    # libgstreamer-plugins-good1.0-dev \
+    ros-noetic-ros-controllers \
+    ros-noetic-joint-state-controller
+    ros-noetic-rviz-plugin-tutorials \
+    gstreamer1.0-plugins-good \
+    python-is-python3 \
+    ros-noetic-axis-camera \
+    ros-noetic-spacenav-node \
+    ros-noetic-teleop-tools \
     ros-noetic-controller-manager \
     ros-noetic-gazebo-ros \
     ros-noetic-gazebo-ros-pkgs \
@@ -18,6 +30,10 @@ RUN apt-get update && apt-get install -y \
     libgl1-mesa-dri \
     x11-apps 
     # && rm -rf /var/lib/apt/lists/*
+
+# Need to make a change where we replace /opt/ros/noetic/lib/axis_camera/axis_ptz.py with the file in the directory
+
+
 
 RUN apt-get install -y ros-noetic-robot-state-publisher
 
@@ -66,8 +82,14 @@ RUN mkdir -p /tmp/runtime-root && chmod 0700 /tmp/runtime-root
 COPY entrypoint.sh /root/entrypoint.sh
 RUN chmod +x /root/entrypoint.sh
 
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+
 # Copy the workspace to a temporary location
 RUN cp -R /root/ros_ws /tmp/ros_ws
+
+WORKDIR /root
+COPY ./src /root/src
+WORKDIR /root/ros_ws
 
 # Set the entrypoint
 ENTRYPOINT ["/root/entrypoint.sh"]

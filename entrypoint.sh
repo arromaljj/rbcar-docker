@@ -1,24 +1,29 @@
 #!/bin/bash
 
-# Check if the volume is empty
-if [ -z "$(ls -A /root/ros_ws)" ]; then
-    echo "Initializing ros_workspace volume..."
-    cp -R /tmp/ros_ws/* /root/ros_ws/
-else
-    echo "ros_workspace volume already initialized."
-fi
+
+cp -R /tmp/ros_ws/* /root/ros_ws/
+
 
 # Source ROS setup
 source /opt/ros/noetic/setup.bash
 
-# Check if the devel/setup.bash exists, if not, build the workspace
-if [ ! -f /root/ros_ws/devel/setup.bash ]; then
-    cd /root/ros_ws
-    catkin_make
+# Copy files from /root/src to /root/ros_ws/src
+echo "Copying files from /root/src to /root/ros_ws/src..."
+# Check if the directory is empty, if not copy 
+if [ "$(ls -A /root/src)" ]; then
+    cp -R /root/src/. /root/ros_ws/src/
+else
+    echo "Source directory is empty. Nothing to copy."
 fi
 
+echo "Building the project"
+
+cd /root/ros_ws
+catkin_make
 
 source /root/ros_ws/devel/setup.bash
 
-# Execute the command passed to docker run
-exec "$@"
+# # Execute the command passed to docker run
+# exec "$@"
+# Drop into a bash shell
+exec /bin/bash

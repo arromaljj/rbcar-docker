@@ -27,3 +27,7 @@
     local-name: robotnik_sensors
     uri: https://github.com/RobotnikAutomation/robotnik_sensors
     version: noetic-devel
+- git: 
+    local-name: gscam
+    uri: https://github.com/ros-drivers/gscam.git
+    version: master
